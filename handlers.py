@@ -2,5 +2,9 @@ import webapp2
 
 class Index(webapp2.RequestHandler):
   def get(self):
-    self.request.headers['Content-Type'] = 'text/plain'
-    self.request.write('Hello')
+    self.response.headers['Content-Type'] = 'text/plain'
+    self.response.write('Hello')
+
+class Ping(webapp2.RequestHandler):
+  def get(self):
+    pass
