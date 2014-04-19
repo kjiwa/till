@@ -1,5 +1,5 @@
 import handlers
 import webapp2
 
-urls = (('/', handlers.index))
+urls = (('/', handlers.Index))
 app = webapp2.WSGIApplication(urls)
