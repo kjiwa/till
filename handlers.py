@@ -1,10 +1,16 @@
+"""URL handlers"""
+
 import webapp2
 
 class Index(webapp2.RequestHandler):
-  def get(self):
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.write('Hello')
+    """Index request handler"""
+    def get(self):
+        """GET method handler"""
+        self.response.headers['Content-Type'] = 'text/plain'
+        self.response.write('Hello')
 
 class Ping(webapp2.RequestHandler):
-  def get(self):
-    pass
+    """Ping request handler"""
+    def get(self):
+        """GET method handler"""
+        pass
