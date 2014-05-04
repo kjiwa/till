@@ -8,3 +8,7 @@ instance_class: B1
 handlers:
 - url: /.*
   script: main.app
+
+libraries:
+- name: jinja2
+  version "2.6"
