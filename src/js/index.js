@@ -43,14 +43,9 @@
 	 * @private
 	 */
 	till.index.Controller.prototype.clearCharts_ = function () {
-		var divs = document.getElementsByTagName('div');
+		var divs = document.querySelectorAll('div.chart');
 		for (var i = 0, j = divs.length; i < j; ++i) {
-			var div = divs[i];
-			if (div.id && div.id.indexOf('chart-') == 0) {
-				while (div.firstChild) {
-					div.removeChild(div.firstChild);
-				}
-			}
+			divs[i].classList.add('hidden');
 		}
 	};
 
@@ -63,7 +58,12 @@
 		var pattern = new RegExp(('(\\,|\\r?\\n|\\r|^)(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^\"\\,\\r\\n]*))'), 'gi');
 		var result = [[]];
 		var matches = null;
-		while (matches = pattern.exec(csv)) {
+		while (true) {
+			matches = pattern.exec(csv);
+			if (!matches) {
+				break;
+			}
+
 			var match = matches[1];
 			if (match.length && match != ',') {
 				result.push([]);
@@ -83,6 +83,11 @@
 	 * @private
 	 */
 	till.index.Controller.prototype.handleListAutos_ = function(status, statusText, responseText) {
+		var charts = document.getElementsByClassName('chart');
+		for (var i = 0, j = charts.length; i < j; ++i) {
+			charts[i].classList.remove('hidden');
+		}
+
 		var rows = this.csvToArray_(responseText);
 		this.renderPriceByYearChart_(rows);
 		this.renderPriceByMileageChart_(rows);
@@ -96,8 +101,8 @@
 		e.preventDefault();
 		this.clearCharts_();
 
-		var city = e.target.city.value;
-		var query = e.target.query.value;
+		var city = e.target.querySelector('[name=city]').value;
+		var query = e.target.querySelector('[name=query]').value;
 		this.service_.listAutos(this.handleListAutos_.bind(this), city, query);
 	};
 
@@ -113,7 +118,7 @@
 			'strokeWidth': 0.0
 		};
 
-		new Dygraph(chart, csv, opts);
+		new window.Dygraph(chart, csv, opts);
 	};
 
 	/**
@@ -141,4 +146,6 @@
 
 		this.renderChart_('chart-price-by-mileage', csv);
 	};
+
+	new till.index.Controller();
 }(window.till));

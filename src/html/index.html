@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
  <head>
+  <link rel="stylesheet" type="text/css" href="till.css">
   <meta charset="utf-8">
   <title>till</title>
  </head>
  <body>
 <div>
- <form method="get" action="/_list-autos">
+ <form method="get" action="/_/list-autos">
   <p>
    <select name="city">
     <option value="atlanta">Atlanta</option>
@@ -20,18 +21,17 @@
  </form>
 </div>
 
-<div id="chart-price-by-mileage"></div>
-<div id="chart-price-by-year"></div>
+<div class="chart hidden">
+ <p><b>Price by Mileage</b>
+ <div id="chart-price-by-mileage"></div>
+</div>
+
+<div class="chart hidden">
+ <p><b>Price by Year</b>
+ <div id="chart-price-by-year"></div>
+</div>
 
 <script type="application/javascript" src="dygraph-combined.js"></script>
-<script type="application/javascript" src="till.js"></script>
-<script type="application/javascript" src="common.js"></script>
 <script type="application/javascript" src="index.js"></script>
-<script type="application/javascript">
-(function () {
-  'use strict';
-  new till.index.Controller();
-}());
-</script>
  </body>
 </html>
