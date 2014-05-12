@@ -1,0 +1,73 @@
+"""craigslist client."""
+
+import cache
+import lxml.etree
+import re
+import urllib
+
+def list_autos(city, query):
+    """Query automobiles."""
+    key = 'till.craigslist.list_autos-%s-%s' % (city, query)
+    result = cache.get(key)
+    if result:
+        return result
+
+    result = []
+    for i in range(0, 10):
+        for j in _list_autos(city, query, i):
+            auto = _get_auto(city, j)
+            if auto['mileage'] and auto['price'] and auto['year']:
+                result.append(auto)
+
+    cache.add(key, result)
+    return result
+
+def _get_auto(city, link):
+    """Fetch automobile details."""
+    url = 'http://%s.craigslist.org%s' % (city, link)
+    tree = lxml.etree.HTML(urllib.urlopen(url).read())
+    elements = tree.xpath('//p[@class="attrgroup"]/span')
+    attrs = [lxml.etree.tostring(
+        i, encoding='unicode', method='text') for i in elements]
+
+    return {
+        'mileage': _get_auto_mileage(attrs),
+        'price': _get_auto_price(tree),
+        'year': _get_auto_year(attrs)
+    }
+
+def _get_auto_mileage(attrs):
+    """Extract mileage from automobile attributes."""
+    pattern = re.compile(r'odometer:\s*(\d+)\s*')
+    for i in attrs:
+        match = pattern.match(i)
+        if match:
+            mileage = match.group(1)
+            mileage *= 1000 if mileage < 1000 else 1
+            return mileage
+
+def _get_auto_price(tree):
+    """Extract price from automobile details."""
+    pattern = re.compile(r'^.*\$(\d+).*$')
+    elements = tree.xpath('//h2[@class="postingtitle"]')
+    for i in elements:
+        title = lxml.etree.tostring(i, encoding='unicode', method='text')
+        match = pattern.match(title.strip())
+        return match.group(1) if match else None
+
+def _get_auto_year(attrs):
+    """Extract year from automobile attributes."""
+    pattern = re.compile(r'^\s*(\d+)')
+    for i in attrs:
+        match = pattern.match(i)
+        if match:
+            return match.group(1)
+
+def _list_autos(city, query, page):
+    """Query automobiles starting on page i."""
+    qstr = 'query=%s&hasPic=1&srchType=T&s=%d' % (query, page * 100)
+    url = 'http://%s.craigslist.org/search/cto?%s' % (city, qstr)
+
+    tree = lxml.etree.HTML(urllib.urlopen(url).read())
+    elements = tree.xpath('//p[@class="row"]/a')
+    return [i.attrib.get('href') for i in elements]

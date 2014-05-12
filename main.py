@@ -10,7 +10,7 @@ _URLS = (
     (r'.*\.js', handlers.www.static_resource('application/javascript')),
     ('/', handlers.www.Index),
     ('/index.html', handlers.www.redirect('/')),
-    ('/_/list', handlers.api.List),
+    ('/_/list-autos', handlers.api.ListAutos),
     ('/_/ping', handlers.api.Ping)
 )
 
