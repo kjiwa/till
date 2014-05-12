@@ -78,7 +78,7 @@ def _list_autos(city, query, page):
 
     url = 'http://%s.craigslist.org/search/cta?%s' % (urllib.quote(city), qstr)
     tree = lxml.etree.HTML(_read_url(url))
-    if tree:
+    if tree is not None:
         elements = tree.xpath('//p[@data-pid]/a')
         return [i.attrib.get('href') for i in elements]
 
