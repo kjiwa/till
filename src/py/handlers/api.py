@@ -17,7 +17,7 @@ class ListAutos(webapp2.RequestHandler):
         writer = csv.writer(out)
         writer.writerow(['Mileage', 'Price', 'Year'])
         for i in result:
-            writer.writerow([i['mileage'], i['price'], i['year']])
+            writer.writerow([i.mileage, i.price, i.year])
 
         self.response.charset = 'utf8'
         self.response.content_type = 'text/csv'

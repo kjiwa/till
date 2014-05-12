@@ -17,7 +17,9 @@ APP = webapp2.WSGIApplication(_URLS)
 
 def main():
     """main"""
+    import logging
     import paste.httpserver
+    logging.basicConfig(level=logging.DEBUG)
     paste.httpserver.serve(APP, host='0.0.0.0', port='8080')
 
 if __name__ == '__main__':

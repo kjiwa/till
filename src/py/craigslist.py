@@ -1,24 +1,33 @@
 """craigslist client."""
 
 import cache
+import collections
+import logging
 import lxml.etree
 import re
 import urllib
 
+Automobile = collections.namedtuple('Automobile', ['mileage', 'price', 'year']);
+
 def list_autos(city, query):
     """Query automobiles."""
-    key = 'till.craigslist.list_autos-%s-%s' % (city, query)
+    key = 'till.craigslist.list_autos-%d-%d' % (hash(city), hash(query))
     result = cache.get(key)
     if result:
         return result
 
+    logging.info('No result found in cache.')
+
     result = []
     for i in range(0, 10):
-        for j in _list_autos(city, query, i):
+        autos = _list_autos(city, query, i)
+        for j in autos:
             auto = _get_auto(city, j)
-            if auto['mileage'] and auto['price'] and auto['year']:
+            if auto.mileage and auto.price and auto.year:
                 result.append(auto)
+        logging.info('Found %d automobiles after %d pages.', len(result), i + 1)
 
+    logging.info('Found %d automobiles total.', len(result))
     cache.add(key, result)
     return result
 
@@ -34,11 +43,8 @@ def _get_auto(city, link):
     attrs = [lxml.etree.tostring(
         i, encoding='unicode', method='text') for i in elements]
 
-    return {
-        'mileage': _get_auto_mileage(attrs),
-        'price': _get_auto_price(tree),
-        'year': _get_auto_year(attrs)
-    }
+    return Automobile(
+        _get_auto_mileage(attrs), _get_auto_price(tree), _get_auto_year(attrs))
 
 def _get_auto_mileage(attrs):
     """Extract mileage from automobile attributes."""
