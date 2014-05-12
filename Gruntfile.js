@@ -30,6 +30,12 @@ module.exports = function (grunt) {
 						cwd: 'src/py/',
 						src: '**/*.py',
 						dest: 'out/',
+					},
+					{
+						expand: true,
+						cwd: 'src/yaml/',
+						src: 'app.yaml',
+						dest: 'out/',
 					}
 				]
 			}

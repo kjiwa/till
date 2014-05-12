@@ -10,8 +10,8 @@ def redirect(url):
         """Redirect request handler."""
         def get(self):
             """GET method handler."""
-            self.response.location = url;
-            self.response.status = 201;
+            self.response.location = url
+            self.response.status = 201
 
     return RequestHandler
 

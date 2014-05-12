@@ -2,7 +2,6 @@
 
 import handlers.api
 import handlers.www
-import paste.httpserver
 import webapp2
 
 _URLS = (
@@ -18,6 +17,7 @@ APP = webapp2.WSGIApplication(_URLS)
 
 def main():
     """main"""
+    import paste.httpserver
     paste.httpserver.serve(APP, host='0.0.0.0', port='8080')
 
 if __name__ == '__main__':
