@@ -4,8 +4,8 @@ till
 Prerequisites
 -------------
 
-# Closure Compiler (https://developers.google.com/closure/compiler/)
-# node.js (http://nodejs.org/)
+1. Closure Compiler (https://developers.google.com/closure/compiler/)
+2. node.js (http://nodejs.org/)
 
 Installation
 ------------
