@@ -85,4 +85,5 @@ def _list_autos(city, query, page):
     return []
 
 def _read_url(url):
+    """Read content from a URL."""
     return urllib.urlopen(url).read()
