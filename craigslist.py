@@ -24,8 +24,11 @@ def list_autos(city, query):
 
 def _get_auto(city, link):
     """Fetch automobile details."""
-    url = 'http://%s.craigslist.org%s' % (
-        urllib.quote(city), urllib.quote(link))
+    url = link
+    if not link.startswith('http://'):
+        url = 'http://%s.craigslist.org%s' % (
+            urllib.quote(city), urllib.quote(link))
+
     tree = lxml.etree.HTML(urllib.urlopen(url).read())
     elements = tree.xpath('//p[@class="attrgroup"]/span')
     attrs = [lxml.etree.tostring(
@@ -73,8 +76,7 @@ def _list_autos(city, query, page):
         'srchType': 'T'
     })
 
-    url = 'http://%s.craigslist.org/search/cto?%s' % (urllib.quote(city), qstr)
-
+    url = 'http://%s.craigslist.org/search/cta?%s' % (urllib.quote(city), qstr)
     tree = lxml.etree.HTML(urllib.urlopen(url).read())
-    elements = tree.xpath('//p[@class="row"]/a')
+    elements = tree.xpath('//p[@data-pid]/a')
     return [i.attrib.get('href') for i in elements]
