@@ -23,10 +23,8 @@
 	 * @private
 	 */
 	till.index.Controller.prototype.run_ = function () {
-		var qs = this.getQueryString_();
-		var city = qs['city'];
-		var query = qs['query'];
-		this.service_.listAutos(this.handleListAutos_.bind(this), city, query);
+		var form = document.querySelector('form');
+		form.addEventListener('submit', this.onSubmit_.bind(this));
 	};
 
 	/**
@@ -42,16 +40,25 @@
 	};
 
 	/**
+	 * @param {string} csv
+	 * @return {!Array.<!Array.<string>>}
 	 * @private
-	 * @return {!Object.<string, string>}
 	 */
-	till.index.Controller.prototype.getQueryString_ = function () {
-    var qs = window.location.search;
-    var params = {};
+	till.index.Controller.prototype.csvToArray_ = function (csv) {
+		var pattern = new RegExp(('(\\,|\\r?\\n|\\r|^)(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^\"\\,\\r\\n]*))'), 'gi');
+		var result = [[]];
+		var matches = null;
+		while (matches = pattern.exec(csv)) {
+			var match = matches[1];
+			if (match.length && match != ',') {
+				result.push([]);
+			}
 
-		var re = new RegExp( "([^?=&]+)(=([^&]*))?", "g" );
-    qs.replace(re, this.bindParams_.bind(this, params));
-		return params;
+			var value = matches[2] ? matches[2].replace(new RegExp('\"\"', 'g'), '\"') : matches[3];
+			result[result.length - 1].push(value);
+		}
+
+		return result;
 	};
 
 	/**
@@ -61,12 +68,60 @@
 	 * @private
 	 */
 	till.index.Controller.prototype.handleListAutos_ = function(status, statusText, responseText) {
-		var chart = document.getElementById('chart');
+		var rows = this.csvToArray_(responseText);
+		this.renderPriceByYearChart_(rows);
+		this.renderPriceByMileageChart_(rows);
+	};
+
+	/**
+	 * @param {Event} e
+	 * @private
+	 */
+	till.index.Controller.prototype.onSubmit_ = function (e) {
+		e.preventDefault();
+		var city = e.target.city.value;
+		var query = e.target.query.value;
+		this.service_.listAutos(this.handleListAutos_.bind(this), city, query);
+	};
+
+	/**
+	 * @param {string} id
+	 * @param {string} csv
+	 * @private
+	 */
+	till.index.Controller.prototype.renderChart_ = function(id, csv) {
+		var chart = document.getElementById(id);
 		var opts = {
 			'drawPoints': true,
 			'strokeWidth': 0.0
 		};
 
-		new Dygraph(chart, responseText, opts);
+		new Dygraph(chart, csv, opts);
+	};
+
+	/**
+	 * @param {!Array.<!Array.<string>>} rows
+	 * @private
+	 */
+	till.index.Controller.prototype.renderPriceByYearChart_ = function(rows) {
+		var csv = '';
+		for (var i = 0, j = rows.length; i < j; ++i) {
+			csv += rows[i][2] + ',' + rows[i][1] + '\n';
+		}
+
+		this.renderChart_('chart-price-by-year', csv);
+	};
+
+	/**
+	 * @param {!Array.<!Array.<string>>} rows
+	 * @private
+	 */
+	till.index.Controller.prototype.renderPriceByMileageChart_ = function(rows) {
+		var csv = '';
+		for (var i = 0, j = rows.length; i < j; ++i) {
+			csv += rows[i][0] + ',' + rows[i][1] + '\n';
+		}
+
+		this.renderChart_('chart-price-by-mileage', csv);
 	};
 }(window.till));

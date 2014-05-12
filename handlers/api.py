@@ -21,7 +21,7 @@ class ListAutos(webapp2.RequestHandler):
 
         self.response.charset = 'utf8'
         self.response.content_type = 'text/csv'
-        self.response.text = out.getvalue().decode()
+        self.response.text = out.getvalue().strip().decode()
 
         out.close()
 

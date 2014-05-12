@@ -5,9 +5,21 @@
   <title>till</title>
  </head>
  <body>
-<p>Hello.
+<div>
+ <form method="get" action="/_list-autos">
+  <p>
+   <select name="city">
+    <option value="houston">Houston</option>
+    <option value="seattle">Seattle</option>
+   </select>
+   <input type="text" name="query" placeholder="Query...">
+   <input type="submit">
+  <p>
+ </form>
+</div>
 
-<div id="chart"></div>
+<div id="chart-price-by-mileage"></div>
+<div id="chart-price-by-year"></div>
 
 <script type="application/javascript" src="dygraph-combined.js"></script>
 <script type="application/javascript" src="till.js"></script>
