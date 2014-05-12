@@ -1,5 +1,9 @@
-(function (till) {
+goog.scope(function () {
 	'use strict';
+
+	goog.provide('till.index.Controller');
+
+	goog.require('till.common.Service');
 
 	/**
 	 * @type {!Object}
@@ -148,4 +152,4 @@
 	};
 
 	new till.index.Controller();
-}(window.till));
+});

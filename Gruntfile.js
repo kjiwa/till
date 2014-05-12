@@ -7,7 +7,7 @@ module.exports = function (grunt) {
 		},
 
 		jshint: {
-			files: ['src/js/till.js', 'src/js/common.js', 'src/js/index.js']
+			files: ['src/js/common.js', 'src/js/index.js']
 		},
 
 		copy: {
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
 		'closure-compiler': {
 			build: {
 				closurePath: '/home/kjiwa/opt/closure',
-				js: ['src/js/till.js', 'src/js/common.js', 'src/js/index.js'],
+				js: ['src/js/common.js', 'src/js/index.js'],
 				jsOutputFile: 'out/www/index.js',
 				options: {
 					compilation_level: 'SIMPLE_OPTIMIZATIONS',

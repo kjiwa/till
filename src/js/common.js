@@ -1,10 +1,7 @@
-(function (till) {
+goog.scope(function () {
 	'use strict';
 
-	/**
-	 * @type {!Object}
-	 */
-	till.common = {};
+	goog.provide('till.common.Service');
 
 	/**
 	 * @constructor
@@ -35,4 +32,4 @@
 			callback(xhr.status, xhr.statusText, xhr.responseText);
 		}
 	};
-}(window.till));
+});
