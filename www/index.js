@@ -35,8 +35,23 @@
 	 * @param {string} $3
 	 * @private
 	 */
-	till.index.Controller.prototype.bindParams_ = function(params, $0, $1, $2, $3) {
+	till.index.Controller.prototype.bindParams_ = function (params, $0, $1, $2, $3) {
 		params[$1] = $3;
+	};
+
+	/**
+	 * @private
+	 */
+	till.index.Controller.prototype.clearCharts_ = function () {
+		var divs = document.getElementsByTagName('div');
+		for (var i = 0, j = divs.length; i < j; ++i) {
+			var div = divs[i];
+			if (div.id && div.id.indexOf('chart-') == 0) {
+				while (div.firstChild) {
+					div.removeChild(div.firstChild);
+				}
+			}
+		}
 	};
 
 	/**
@@ -79,6 +94,8 @@
 	 */
 	till.index.Controller.prototype.onSubmit_ = function (e) {
 		e.preventDefault();
+		this.clearCharts_();
+
 		var city = e.target.city.value;
 		var query = e.target.query.value;
 		this.service_.listAutos(this.handleListAutos_.bind(this), city, query);
