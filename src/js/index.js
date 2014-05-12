@@ -86,7 +86,7 @@ goog.scope(function () {
 	 * @param {string} responseText
 	 * @private
 	 */
-	till.index.Controller.prototype.handleListAutos_ = function(status, statusText, responseText) {
+	till.index.Controller.prototype.handleListAutos_ = function (status, statusText, responseText) {
 		var charts = document.getElementsByClassName('chart');
 		for (var i = 0, j = charts.length; i < j; ++i) {
 			charts[i].classList.remove('hidden');
@@ -115,7 +115,7 @@ goog.scope(function () {
 	 * @param {string} csv
 	 * @private
 	 */
-	till.index.Controller.prototype.renderChart_ = function(id, csv) {
+	till.index.Controller.prototype.renderChart_ = function (id, csv) {
 		var chart = document.getElementById(id);
 		var opts = {
 			'drawPoints': true,
@@ -129,7 +129,7 @@ goog.scope(function () {
 	 * @param {!Array.<!Array.<string>>} rows
 	 * @private
 	 */
-	till.index.Controller.prototype.renderPriceByYearChart_ = function(rows) {
+	till.index.Controller.prototype.renderPriceByYearChart_ = function (rows) {
 		var csv = '';
 		for (var i = 0, j = rows.length; i < j; ++i) {
 			csv += rows[i][2] + ',' + rows[i][1] + '\n';
@@ -142,7 +142,7 @@ goog.scope(function () {
 	 * @param {!Array.<!Array.<string>>} rows
 	 * @private
 	 */
-	till.index.Controller.prototype.renderPriceByMileageChart_ = function(rows) {
+	till.index.Controller.prototype.renderPriceByMileageChart_ = function (rows) {
 		var csv = '';
 		for (var i = 0, j = rows.length; i < j; ++i) {
 			csv += rows[i][0] + ',' + rows[i][1] + '\n';

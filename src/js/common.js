@@ -27,7 +27,7 @@ goog.scope(function () {
 	 * @param {XMLHttpRequest} xhr
 	 * @param {function(number, string, string)} callback
 	 */
-	till.common.Service.prototype.handleXmlHttpReadyStateChange_ = function(xhr, callback) {
+	till.common.Service.prototype.handleXmlHttpReadyStateChange_ = function (xhr, callback) {
 		if (xhr.readyState == 4) {
 			callback(xhr.status, xhr.statusText, xhr.responseText);
 		}
