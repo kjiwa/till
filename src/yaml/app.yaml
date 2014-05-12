@@ -14,3 +14,5 @@ handlers:
 libraries:
 - name: jinja2
   version: "2.6"
+- name: lxml
+  version: "2.3"

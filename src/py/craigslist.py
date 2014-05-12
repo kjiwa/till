@@ -29,7 +29,7 @@ def _get_auto(city, link):
         url = 'http://%s.craigslist.org%s' % (
             urllib.quote(city), urllib.quote(link))
 
-    tree = lxml.etree.HTML(urllib.urlopen(url).read())
+    tree = lxml.etree.HTML(_read_url(url))
     elements = tree.xpath('//p[@class="attrgroup"]/span')
     attrs = [lxml.etree.tostring(
         i, encoding='unicode', method='text') for i in elements]
@@ -77,6 +77,12 @@ def _list_autos(city, query, page):
     })
 
     url = 'http://%s.craigslist.org/search/cta?%s' % (urllib.quote(city), qstr)
-    tree = lxml.etree.HTML(urllib.urlopen(url).read())
-    elements = tree.xpath('//p[@data-pid]/a')
-    return [i.attrib.get('href') for i in elements]
+    tree = lxml.etree.HTML(_read_url(url))
+    if tree:
+        elements = tree.xpath('//p[@data-pid]/a')
+        return [i.attrib.get('href') for i in elements]
+
+    return []
+
+def _read_url(url):
+    return urllib.urlopen(url).read()
