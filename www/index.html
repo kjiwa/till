@@ -6,8 +6,14 @@
  </head>
  <body>
 <p>Hello.
-<script type="application/javascript" src="till.js">
-<script type="application/javascript" src="index.js">
+
+<div id="chart"></div>
+
+<script type="application/javascript" src="dygraph-combined.js"></script>
+<script type="application/javascript" src="till.js"></script>
+<script type="application/javascript" src="common.js"></script>
+<script type="application/javascript" src="index.js"></script>
+<script type="application/javascript">
 (function () {
   'use strict';
   new till.index.Controller();

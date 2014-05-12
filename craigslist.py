@@ -24,7 +24,8 @@ def list_autos(city, query):
 
 def _get_auto(city, link):
     """Fetch automobile details."""
-    url = 'http://%s.craigslist.org%s' % (city, link)
+    url = 'http://%s.craigslist.org%s' % (
+        urllib.quote(city), urllib.quote(link))
     tree = lxml.etree.HTML(urllib.urlopen(url).read())
     elements = tree.xpath('//p[@class="attrgroup"]/span')
     attrs = [lxml.etree.tostring(
@@ -42,7 +43,7 @@ def _get_auto_mileage(attrs):
     for i in attrs:
         match = pattern.match(i)
         if match:
-            mileage = match.group(1)
+            mileage = int(match.group(1))
             mileage *= 1000 if mileage < 1000 else 1
             return mileage
 
@@ -53,20 +54,26 @@ def _get_auto_price(tree):
     for i in elements:
         title = lxml.etree.tostring(i, encoding='unicode', method='text')
         match = pattern.match(title.strip())
-        return match.group(1) if match else None
+        return int(match.group(1)) if match else None
 
 def _get_auto_year(attrs):
     """Extract year from automobile attributes."""
-    pattern = re.compile(r'^\s*(\d+)')
+    pattern = re.compile(r'^\s*(\d+).*$')
     for i in attrs:
         match = pattern.match(i)
         if match:
-            return match.group(1)
+            return int(match.group(1))
 
 def _list_autos(city, query, page):
     """Query automobiles starting on page i."""
-    qstr = 'query=%s&hasPic=1&srchType=T&s=%d' % (query, page * 100)
-    url = 'http://%s.craigslist.org/search/cto?%s' % (city, qstr)
+    qstr = urllib.urlencode({
+        'hasPic': 1,
+        'query': query,
+        's': page * 100,
+        'srchType': 'T'
+    })
+
+    url = 'http://%s.craigslist.org/search/cto?%s' % (urllib.quote(city), qstr)
 
     tree = lxml.etree.HTML(urllib.urlopen(url).read())
     elements = tree.xpath('//p[@class="row"]/a')

@@ -18,7 +18,7 @@ APP = webapp2.WSGIApplication(_URLS)
 
 def main():
     """main"""
-    paste.httpserver.serve(APP, host='localhost', port='8080')
+    paste.httpserver.serve(APP, host='0.0.0.0', port='8080')
 
 if __name__ == '__main__':
     main()
