@@ -95,6 +95,7 @@ goog.scope(function () {
 		var rows = this.csvToArray_(responseText);
 		this.renderPriceByYearChart_(rows);
 		this.renderPriceByMileageChart_(rows);
+		this.renderMileageByYearChart_(rows);
 	};
 
 	/**
@@ -123,6 +124,19 @@ goog.scope(function () {
 		};
 
 		new window.Dygraph(chart, csv, opts);
+	};
+
+	/**
+	 * @param {!Array.<!Array.<string>>} rows
+	 * @private
+	 */
+	till.index.Controller.prototype.renderMileageByYearChart_ = function (rows) {
+		var csv = '';
+		for (var i = 0, j = rows.length; i < j; ++i) {
+			csv += rows[i][2] + ',' + rows[i][0] + '\n';
+		}
+
+		this.renderChart_('chart-mileage-by-year', csv);
 	};
 
 	/**

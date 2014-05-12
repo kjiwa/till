@@ -1,6 +1,5 @@
 """www URL handlers"""
 
-import cache
 import os
 import template
 import webapp2
@@ -37,17 +36,11 @@ def static_resource(mime_type):
         """Static resource request handler."""
         def get(self):
             """GET method handler"""
-            key = ('till.handlers.www.static_resource-%d.RequestHandler.get-%d'
-                   % (hash(mime_type), hash(self.request.path_info)))
-            text = cache.get(key)
-            if not text:
-                with open('www/' + self.request.path_info) as handle:
-                    text = handle.read().decode()
-                    cache.add(key, text)
-
             self.response.charset = 'utf8'
             self.response.content_type = mime_type
-            self.response.text = text
+
+            with open('www/' + self.request.path_info) as handle:
+                self.response.text = handle.read().decode()
 
     return RequestHandler
 

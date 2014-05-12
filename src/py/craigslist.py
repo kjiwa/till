@@ -7,7 +7,7 @@ import lxml.etree
 import re
 import urllib
 
-Automobile = collections.namedtuple('Automobile', ['mileage', 'price', 'year']);
+Automobile = collections.namedtuple('Automobile', ['mileage', 'price', 'year'])
 
 def list_autos(city, query):
     """Query automobiles.
@@ -24,7 +24,7 @@ def list_autos(city, query):
     if result:
         return result
 
-    logging.info('No result found in cache.')
+    logging.info('No result found in cache. Querying %s for "%s".', city, query)
 
     result = []
     for i in range(0, 10):
