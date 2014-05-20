@@ -19,6 +19,7 @@ def list_autos(city, query):
     Returns:
         A list of matching Automobiles.
     """
+    query = query.lower()
     key = 'till.craigslist.list_autos-%d-%d' % (hash(city), hash(query))
     result = cache.get(key)
     if result:
