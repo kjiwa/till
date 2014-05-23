@@ -19,7 +19,7 @@ def redirect(url):
         def get(self):
             """GET method handler."""
             self.response.location = url
-            self.response.status = 201
+            self.response.status = 301
 
     return RequestHandler
 
