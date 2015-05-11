@@ -2,6 +2,8 @@
 
 goog.provide('till.Service');
 
+goog.require('goog.string');
+
 goog.scope(function() {
 
 
