@@ -3,7 +3,6 @@
 goog.provide('till');
 
 goog.require('goog.soy');
-goog.require('goog.string');
 goog.require('till.Service');
 goog.require('till.templates');
 
