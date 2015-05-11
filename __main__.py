@@ -1,35 +1,46 @@
 """till"""
 
-import StringIO
 import bottle
 import craigslist
 import csv
 import gflags
 import logging
 import sys
+import StringIO
 
 FLAGS = gflags.FLAGS
 
 gflags.DEFINE_integer('port', '8080', 'The port to listen on.')
 
+
 @bottle.route('/')
 def html():
   return bottle.static_file('till.html', '.')
+
 
 @bottle.route('/till.css')
 def css():
   return bottle.static_file('till_combined.css', 'compiled')
 
+
 @bottle.route('/till.js')
 def js():
   return bottle.static_file('app_combined.js', 'compiled')
+
 
 @bottle.route('/_/ping')
 def ping():
   return bottle.HTTPResponse(status=204)
 
+
 @bottle.route('/_/list-autos')
 def list_autos():
+  """Queries Craigslist and returns the result as a CSV.
+
+  Returns:
+    A CSV string with mileage, price, and year data for a set of vehicles.
+  """
+
   # Execute the query.
   city = bottle.request.query.city
   query = bottle.request.query.query
@@ -51,6 +62,7 @@ def list_autos():
   bottle.response.content_type = 'text/csv'
   return content
 
+
 def main(argv):
   logging.basicConfig(level=logging.DEBUG)
 
@@ -61,6 +73,7 @@ def main(argv):
     sys.exit(1)
 
   bottle.run(host='0.0.0.0', port=FLAGS.port)
+
 
 if __name__ == '__main__':
   main(sys.argv)
