@@ -1,24 +1,21 @@
 'use strict';
 
-goog.provide('till.index.Controller');
+goog.provide('till');
 
-goog.require('till.common.Service');
+goog.require('goog.soy');
+goog.require('till.Service');
+goog.require('till.templates');
 
 goog.scope(function () {
 /**
- * @type {!Object}
- */
-till.index = {};
-
-/**
  * @constructor
  */
-till.index.Controller = function () {
+var App = function () {
   /**
-   * @type {!till.common.Service}
+   * @type {!till.Service}
    * @private
    */
-  this.service_ = new till.common.Service();
+  this.service_ = new till.Service();
 
   this.run_();
 };
@@ -26,7 +23,8 @@ till.index.Controller = function () {
 /**
  * @private
  */
-till.index.Controller.prototype.run_ = function () {
+App.prototype.run_ = function () {
+  document.body.appendChild(goog.soy.renderAsElement(till.templates.container));
   var form = document.querySelector('form');
   form.addEventListener('submit', this.onSubmit_.bind(this));
 };
@@ -39,17 +37,17 @@ till.index.Controller.prototype.run_ = function () {
  * @param {string} $3
  * @private
  */
-till.index.Controller.prototype.bindParams_ = function (params, $0, $1, $2, $3) {
+App.prototype.bindParams_ = function (params, $0, $1, $2, $3) {
   params[$1] = $3;
 };
 
 /**
  * @private
  */
-till.index.Controller.prototype.clearCharts_ = function () {
-  var divs = document.querySelectorAll('div.chart');
+App.prototype.clearCharts_ = function () {
+  var divs = document.querySelectorAll('div.' + goog.getCssName('chart'));
   for (var i = 0, j = divs.length; i < j; ++i) {
-    divs[i].classList.add('hidden');
+    divs[i].classList.add(goog.getCssName('hidden'));
   }
 };
 
@@ -58,7 +56,7 @@ till.index.Controller.prototype.clearCharts_ = function () {
  * @return {!Array.<!Array.<string>>}
  * @private
  */
-till.index.Controller.prototype.csvToArray_ = function (csv) {
+App.prototype.csvToArray_ = function (csv) {
   var pattern = new RegExp(('(\\,|\\r?\\n|\\r|^)(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^\"\\,\\r\\n]*))'), 'gi');
   var result = [[]];
   var matches = null;
@@ -86,10 +84,10 @@ till.index.Controller.prototype.csvToArray_ = function (csv) {
  * @param {string} responseText
  * @private
  */
-till.index.Controller.prototype.handleListAutos_ = function (status, statusText, responseText) {
-  var charts = document.getElementsByClassName('chart');
+App.prototype.handleListAutos_ = function (status, statusText, responseText) {
+  var charts = document.getElementsByClassName(goog.getCssName('chart'));
   for (var i = 0, j = charts.length; i < j; ++i) {
-    charts[i].classList.remove('hidden');
+    charts[i].classList.remove(goog.getCssName('hidden'));
   }
 
   var rows = this.csvToArray_(responseText);
@@ -102,7 +100,7 @@ till.index.Controller.prototype.handleListAutos_ = function (status, statusText,
  * @param {Event} e
  * @private
  */
-till.index.Controller.prototype.onSubmit_ = function (e) {
+App.prototype.onSubmit_ = function (e) {
   e.preventDefault();
   this.clearCharts_();
 
@@ -116,21 +114,21 @@ till.index.Controller.prototype.onSubmit_ = function (e) {
  * @param {string} csv
  * @private
  */
-till.index.Controller.prototype.renderChart_ = function (id, csv) {
+App.prototype.renderChart_ = function (id, csv) {
   var chart = document.getElementById(id);
   var opts = {
     'drawPoints': true,
     'strokeWidth': 0.0
   };
 
-  new window.Dygraph(chart, csv, opts);
+  new window['Dygraph'](chart, csv, opts);
 };
 
 /**
  * @param {!Array.<!Array.<string>>} rows
  * @private
  */
-till.index.Controller.prototype.renderMileageByYearChart_ = function (rows) {
+App.prototype.renderMileageByYearChart_ = function (rows) {
   var csv = '';
   for (var i = 0, j = rows.length; i < j; ++i) {
     csv += rows[i][2] + ',' + rows[i][0] + '\n';
@@ -143,7 +141,7 @@ till.index.Controller.prototype.renderMileageByYearChart_ = function (rows) {
  * @param {!Array.<!Array.<string>>} rows
  * @private
  */
-till.index.Controller.prototype.renderPriceByYearChart_ = function (rows) {
+App.prototype.renderPriceByYearChart_ = function (rows) {
   var csv = '';
   for (var i = 0, j = rows.length; i < j; ++i) {
     csv += rows[i][2] + ',' + rows[i][1] + '\n';
@@ -156,7 +154,7 @@ till.index.Controller.prototype.renderPriceByYearChart_ = function (rows) {
  * @param {!Array.<!Array.<string>>} rows
  * @private
  */
-till.index.Controller.prototype.renderPriceByMileageChart_ = function (rows) {
+App.prototype.renderPriceByMileageChart_ = function (rows) {
   var csv = '';
   for (var i = 0, j = rows.length; i < j; ++i) {
     csv += rows[i][0] + ',' + rows[i][1] + '\n';
@@ -165,5 +163,5 @@ till.index.Controller.prototype.renderPriceByMileageChart_ = function (rows) {
   this.renderChart_('chart-price-by-mileage', csv);
 };
 
-new till.index.Controller();
+new App();
 });

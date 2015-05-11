@@ -1,6 +1,5 @@
 """craigslist client."""
 
-import cache
 import collections
 import logging
 import lxml.etree
@@ -21,11 +20,6 @@ def list_autos(city, query):
   """
   query = query.lower()
   key = 'till.craigslist.list_autos-%d-%d' % (hash(city), hash(query))
-  result = cache.get(key)
-  if result:
-    return result
-
-  logging.info('No result found in cache. Querying %s for "%s".', city, query)
 
   result = []
   for i in range(0, 10):
@@ -42,7 +36,6 @@ def list_autos(city, query):
       break
 
   logging.info('Found %d automobiles total.', len(result))
-  cache.add(key, result)
   return result
 
 def _get_auto(city, link):

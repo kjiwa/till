@@ -1,20 +1,22 @@
 'use strict';
 
-goog.provide('till.common.Service');
+goog.provide('till.Service');
 
 goog.scope(function () {
 /**
  * @constructor
  */
-till.common.Service = function () {
+till.Service = function () {
 };
+
+var Service = till.Service;
 
 /**
  * @param {function(number, string, string)} callback
  * @param {string} city
- * @param {query} query
+ * @param {string} query
  */
-till.common.Service.prototype.listAutos = function (callback, city, query) {
+Service.prototype.listAutos = function (callback, city, query) {
   var url = '/_/list-autos?city=' + encodeURIComponent(city) + '&query=' + encodeURIComponent(query);
   var xhr = new XMLHttpRequest();
 
@@ -27,7 +29,7 @@ till.common.Service.prototype.listAutos = function (callback, city, query) {
  * @param {XMLHttpRequest} xhr
  * @param {function(number, string, string)} callback
  */
-till.common.Service.prototype.handleXmlHttpReadyStateChange_ = function (xhr, callback) {
+Service.prototype.handleXmlHttpReadyStateChange_ = function (xhr, callback) {
   if (xhr.readyState == 4) {
     callback(xhr.status, xhr.statusText, xhr.responseText);
   }
