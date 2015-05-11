@@ -3,6 +3,7 @@
 import collections
 import logging
 import re
+import threading
 import urllib
 import lxml.etree
 
@@ -23,10 +24,15 @@ def list_autos(city, query):
   for i in range(0, 10):
     autos = _list_autos(city, query.lower(), i)
     result_len = len(result)
+
+    threads = []
     for j in autos:
-      auto = _get_auto(city, j)
-      if auto.mileage and auto.price and auto.year:
-        result.append(auto)
+      thread = threading.Thread(target=_get_auto_thread, args = (city, j, result))
+      thread.start()
+      threads.append(thread)
+
+    for thread in threads:
+      thread.join()
 
     logging.info('Found %d automobiles after %d pages.', len(result), i + 1)
     if result_len == len(result):
@@ -149,3 +155,16 @@ def _read_url(url):
     A string representing the contents of the URL.
   """
   return urllib.urlopen(url).read()
+
+
+def _get_auto_thread(city, link, result):
+  """Get automobile details and append it to the result.
+
+  Args:
+    city: The city to search.
+    link: The path portion of the URL to fetch.
+    result: The automobile result set.
+  """
+  auto = _get_auto(city, link)
+  if auto.mileage and auto.price and auto.year:
+    result.append(auto)
