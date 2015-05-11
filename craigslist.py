@@ -27,8 +27,7 @@ def list_autos(city, query):
 
     threads = []
     for j in autos:
-      thread = threading.Thread(
-          target=_get_auto_thread, args = (city, j, result))
+      thread = threading.Thread(target=_get_auto_thread, args=(city, j, result))
       thread.start()
       threads.append(thread)
 
