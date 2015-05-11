@@ -1,7 +1,8 @@
 # Till
 
 Till is a research tool that scrapes data from automobiles on sale on Craigslist
-and renders the data in some charts.
+and renders the data in some charts. It is slow, but it generates some
+interesting data.
 
 The CSS and JS are compiled with
 [Closure Tools](https://developers.google.com/closure/). Instead of including a
