@@ -35,19 +35,6 @@ App.prototype.run_ = function() {
 
 
 /**
- * @param {!Object.<string, string>} params
- * @param {string} $0
- * @param {string} $1
- * @param {string} $2
- * @param {string} $3
- * @private
- */
-App.prototype.bindParams_ = function(params, $0, $1, $2, $3) {
-  params[$1] = $3;
-};
-
-
-/**
  * @private
  */
 App.prototype.clearCharts_ = function() {
