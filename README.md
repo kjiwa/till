@@ -14,7 +14,7 @@ virtualenv environment. e.g.
 ```
 ./build.sh -- --port=33080
 Bottle v0.13-dev server starting up (using WSGIRefServer())...
-Listening on http://0.0.0.0:8080/
+Listening on http://0.0.0.0:33080/
 Hit Ctrl-C to quit.
 
 127.0.0.1 - - [10/May/2015 20:38:46] "GET / HTTP/1.1" 200 324
