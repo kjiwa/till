@@ -1,7 +1,15 @@
-.chart {
-  display: inline-block;
+.till-form > * {
+  margin: 2px;
+  vertical-align: middle;
 }
 
-.hidden {
-  display: none;
+.till-results {
+  margin-top: 32px;
+}
+
+.till-results-chart {
+  border: 2px solid #000;
+  display: inline-block;
+  margin: 2px;
+  padding: 8px;
 }

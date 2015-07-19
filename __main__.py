@@ -1,12 +1,11 @@
-"""till"""
+"""An automobile price research tool."""
 
 import bottle
 import craigslist
-import csv
 import gflags
+import json
 import logging
 import sys
-import StringIO
 
 FLAGS = gflags.FLAGS
 
@@ -28,39 +27,39 @@ def js():
   return bottle.static_file('app_combined.js', 'compiled')
 
 
-@bottle.route('/_/ping')
+@bottle.route('/ping')
 def ping():
   return bottle.HTTPResponse(status=204)
 
 
-@bottle.route('/_/list-autos')
-def list_autos():
-  """Queries Craigslist and returns the result as a CSV.
+@bottle.route('/automobiles/<city>/<query>')
+def automobiles(city, query):
+  """Queries Craigslist for automobiles.
+
+  Args:
+    city: The city in which to search.
+    query: The search query to be executed.
 
   Returns:
-    A CSV string with mileage, price, and year data for a set of vehicles.
+    A JSON-encoded array of vehicles.
   """
+  result = craigslist.automobiles(city, query)
 
-  # Execute the query.
-  city = bottle.request.query.city
-  query = bottle.request.query.query
-  if not city or not query:
-    raise bottle.HTTPError(400, 'A city and query are required.')
+  bottle.response.content_type = 'application/json'
+  content = [{'mileage': i.mileage, 'price': i.price, 'year': i.year}
+             for i in result]
+  return json.dumps({'automobiles': content})
 
-  result = craigslist.list_autos(city, query)
 
-  # Format as CSV.
-  out = StringIO.StringIO()
-  writer = csv.writer(out)
-  writer.writerow(['Mileage', 'Price', 'Year'])
-  for i in result:
-    writer.writerow([i.mileage, i.price, i.year])
+@bottle.route('/cities')
+def cities():
+  """Gets a list of cities that can be queried.
 
-  content = out.getvalue().decode().strip()
-  out.close()
-
-  bottle.response.content_type = 'text/csv'
-  return content
+  Returns:
+    A list of city names.
+  """
+  bottle.response.content_type = 'application/json'
+  return json.dumps({'cities': craigslist.cities()})
 
 
 def main(argv):

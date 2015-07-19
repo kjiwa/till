@@ -10,7 +10,7 @@ import lxml.etree
 Automobile = collections.namedtuple('Automobile', ['mileage', 'price', 'year'])
 
 
-def list_autos(city, query):
+def automobiles(city, query):
   """Query automobiles.
 
   Args:
@@ -22,7 +22,7 @@ def list_autos(city, query):
   """
   result = []
   for i in range(0, 10):
-    autos = _list_autos(city, query.lower(), i)
+    autos = _list_autos(city.lower(), query.lower(), i)
     result_len = len(result)
 
     threads = []
@@ -41,6 +41,15 @@ def list_autos(city, query):
 
   logging.info('Found %d automobiles total.', len(result))
   return result
+
+
+def cities():
+  """Gets a list of supported cities.
+
+  Returns:
+    A list of city names.
+  """
+  return ['Atlanta', 'Chicago', 'Seattle']
 
 
 def _get_auto(city, link):

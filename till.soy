@@ -4,33 +4,8 @@
  * Renders the application container.
  */
 {template .container}
-  <div>
-    <form method="get" action="/_/list-autos">
-      <p>
-        <select name="city">
-          <option value="atlanta">Atlanta</option>
-          <option value="houston">Houston</option>
-          <option value="seattle">Seattle</option>
-          <option value="sfbay">SF &amp; Bay Area</option>
-        </select>
-        <input type="text" name="query" placeholder="Query...">
-        <input type="submit">
-      </p>
-    </form>
-  </div>
-
-  <div class="{css chart} {css hidden}">
-    <p><b>Price by Mileage</b>
-    <div id="chart-price-by-mileage"></div>
-  </div>
-
-  <div class="{css chart} {css hidden}">
-    <p><b>Price by Year</b>
-    <div id="chart-price-by-year"></div>
-  </div>
-
-  <div class="{css chart} {css hidden}">
-    <p><b>Mileage by Year</b>
-    <div id="chart-mileage-by-year"></div>
+  <div class="{css till}">
+    <div class="{css till-form}"></div>
+    <div class="{css till-results}"></div>
   </div>
 {/template}

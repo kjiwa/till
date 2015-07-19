@@ -2,7 +2,14 @@
 
 goog.provide('till.Service');
 
+goog.require('goog.array');
+goog.require('goog.events.Event');
+goog.require('goog.net.EventType');
+goog.require('goog.net.XhrIo');
+goog.require('goog.object');
 goog.require('goog.string');
+goog.require('goog.string.format');
+goog.require('till.model.Automobile');
 
 goog.scope(function() {
 
@@ -18,33 +25,83 @@ var Service = till.Service;
 
 
 /**
- * @param {function(number, string, string)} callback
- * @param {string} city
- * @param {string} query
+ * @param {function(!Array.<string>)} success
+ * @param {function(goog.events.Event)} error
  */
-Service.prototype.listAutos = function(callback, city, query) {
-  var url = goog.string.buildString(
-      '/_/list-autos?city=',
-      encodeURIComponent(city),
-      '&query=',
-      encodeURIComponent(query));
-  var xhr = new XMLHttpRequest();
-
-  xhr.onreadystatechange = this.handleXmlHttpReadyStateChange_.bind(
-      this, xhr, callback);
-  xhr.open('GET', url, true);
-  xhr.send();
+Service.prototype.getCities = function(success, error) {
+  var xhr = new goog.net.XhrIo();
+  goog.events.listen(
+      xhr, goog.net.EventType.SUCCESS,
+      goog.bind(this.handleGetCitiesSuccess_, this, success, error));
+  xhr.send('/cities', 'GET');
 };
 
 
 /**
- * @param {XMLHttpRequest} xhr
- * @param {function(number, string, string)} callback
+ * @param {string} city
+ * @param {string} query
+ * @param {function(!Array.<!till.model.Automobile>)} success
+ * @param {function(goog.events.Event)} error
+ */
+Service.prototype.getAutomobiles = function(city, query, success, error) {
+  var xhr = new goog.net.XhrIo();
+  goog.events.listen(
+      xhr, goog.net.EventType.SUCCESS,
+      goog.bind(this.handleGetAutomobilesSuccess_, this, success, error));
+
+  var url = goog.string.format(
+      '/automobiles/%s/%s', goog.string.urlEncode(city),
+      goog.string.urlEncode(query));
+  xhr.send(url, 'GET');
+};
+
+
+/**
+ * @param {function(goog.events.Event)} error
+ * @param {goog.events.Event} e
  * @private
  */
-Service.prototype.handleXmlHttpReadyStateChange_ = function(xhr, callback) {
-  if (xhr.readyState == 4) {
-    callback(xhr.status, xhr.statusText, xhr.responseText);
+Service.prototype.handleError_ = function(error, e) {
+  error(e);
+};
+
+
+/**
+ * @param {function(!Array.<string>)} success
+ * @param {function(goog.events.Event)} error
+ * @param {goog.events.Event} e
+ * @private
+ */
+Service.prototype.handleGetCitiesSuccess_ = function(success, error, e) {
+  var result = goog.object.get(e.target.getResponseJson(), 'cities', []);
+  if (!goog.isArray(result)) {
+    error(e);
+    return;
   }
+
+  success(result);
+};
+
+
+/**
+ * @param {function(!Array.<!till.model.Automobile>)} success
+ * @param {function(goog.events.Event)} error
+ * @param {goog.events.Event} e
+ * @private
+ */
+Service.prototype.handleGetAutomobilesSuccess_ = function(success, error, e) {
+  var result = goog.object.get(e.target.getResponseJson(), 'automobiles', []);
+  if (!goog.isArray(result)) {
+    error(e);
+    return;
+  }
+
+  success(goog.array.map(result, function(entry) {
+    return /** @type {!till.model.Automobile} */ ({
+      mileage: entry['mileage'],
+      price: entry['price'],
+      year: entry['year']
+    });
+  }));
 };
 });  // goog.scope
