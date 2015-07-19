@@ -10,6 +10,9 @@ import lxml.etree
 Automobile = collections.namedtuple('Automobile', ['mileage', 'price', 'year'])
 
 
+City = collections.namedtuple('City', ['city_id', 'name'])
+
+
 def automobiles(city, query):
   """Query automobiles.
 
@@ -47,9 +50,16 @@ def cities():
   """Gets a list of supported cities.
 
   Returns:
-    A list of city names.
+    A list of supported cities.
   """
-  return ['Atlanta', 'Chicago', 'Seattle']
+  return [
+      City('atlanta', 'Atlanta'),
+      City('chicago', 'Chicago'),
+      City('houston', 'Houston'),
+      City('seattle', 'Seattle'),
+      City('sfbay', 'SF & Bay Area'),
+      City('toronto', 'Toronto')
+  ]
 
 
 def _get_auto(city, link):
@@ -60,7 +70,7 @@ def _get_auto(city, link):
     link: The path portion of the URL to fetch.
 
   Returns:
-    An Automobile object.
+    An Automobile object or None if there was a parsing error.
   """
   url = link
   if not link.startswith('http://'):
@@ -68,6 +78,9 @@ def _get_auto(city, link):
         urllib.quote(city), urllib.quote(link))
 
   tree = lxml.etree.HTML(_read_url(url))
+  if tree is None:
+    return None
+
   elements = tree.xpath('//p[@class="attrgroup"]/span')
   attrs = [lxml.etree.tostring(
       i, encoding='unicode', method='text') for i in elements]
@@ -175,5 +188,5 @@ def _get_auto_thread(city, link, result):
     result: The automobile result set.
   """
   auto = _get_auto(city, link)
-  if auto.mileage and auto.price and auto.year:
+  if auto and auto.mileage and auto.price and auto.year:
     result.append(auto)

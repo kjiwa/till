@@ -10,6 +10,7 @@ goog.require('goog.object');
 goog.require('goog.string');
 goog.require('goog.string.format');
 goog.require('till.model.Automobile');
+goog.require('till.model.City');
 
 goog.scope(function() {
 
@@ -25,7 +26,7 @@ var Service = till.Service;
 
 
 /**
- * @param {function(!Array.<string>)} success
+ * @param {function(!Array.<!till.model.City>)} success
  * @param {function(goog.events.Event)} error
  */
 Service.prototype.getCities = function(success, error) {
@@ -67,7 +68,7 @@ Service.prototype.handleError_ = function(error, e) {
 
 
 /**
- * @param {function(!Array.<string>)} success
+ * @param {function(!Array.<!till.model.City>)} success
  * @param {function(goog.events.Event)} error
  * @param {goog.events.Event} e
  * @private
@@ -79,7 +80,12 @@ Service.prototype.handleGetCitiesSuccess_ = function(success, error, e) {
     return;
   }
 
-  success(result);
+  success(goog.array.map(result, function(entry) {
+    return /** @type {!till.model.City} */ ({
+      city_id: entry['city_id'],
+      name: entry['name']
+    });
+  }));
 };
 
 

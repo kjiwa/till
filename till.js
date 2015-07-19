@@ -12,6 +12,7 @@ goog.require('goog.ui.MenuItem');
 goog.require('goog.ui.Select');
 goog.require('till.Service');
 goog.require('till.model.Automobile');
+goog.require('till.model.City');
 goog.require('till.templates');
 
 goog.scope(function() {
@@ -158,7 +159,7 @@ App.prototype.submitQuery_ = function() {
     return;
   }
 
-  city = city.getCaption();
+  city = /** @type {string} */ (city.getValue());
   this.service_.getAutomobiles(
       city, query, goog.bind(this.handleGetAutomobiles_, this),
       goog.bind(this.handleError_, this));
@@ -193,13 +194,13 @@ App.prototype.handleGetAutomobiles_ = function(automobiles) {
 
 
 /**
- * @param {!Array.<string>} cities
+ * @param {!Array.<!till.model.City>} cities
  * @private
  */
 App.prototype.handleGetCities_ = function(cities) {
   goog.array.forEach(cities, function(city) {
     this.citySelect_.addItem(
-        new goog.ui.MenuItem(city, undefined, this.dom_));
+        new goog.ui.MenuItem(city.name, city.city_id, this.dom_));
   }, this);
 };
 

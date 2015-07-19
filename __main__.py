@@ -44,10 +44,10 @@ def automobiles(city, query):
     A JSON-encoded array of vehicles.
   """
   result = craigslist.automobiles(city, query)
-
-  bottle.response.content_type = 'application/json'
   content = [{'mileage': i.mileage, 'price': i.price, 'year': i.year}
              for i in result]
+
+  bottle.response.content_type = 'application/json'
   return json.dumps({'automobiles': content})
 
 
@@ -58,8 +58,11 @@ def cities():
   Returns:
     A list of city names.
   """
+  result = craigslist.cities()
+  content = [{'city_id': i.city_id, 'name': i.name} for i in result]
+
   bottle.response.content_type = 'application/json'
-  return json.dumps({'cities': craigslist.cities()})
+  return json.dumps({'cities': content})
 
 
 def main(argv):

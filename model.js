@@ -1,6 +1,7 @@
 'use strict';
 
 goog.provide('till.model.Automobile');
+goog.provide('till.model.City');
 
 goog.scope(function() {
 
@@ -13,4 +14,13 @@ goog.scope(function() {
  * }}
  */
 till.model.Automobile;
+
+
+/**
+ * @typedef {{
+ *   city_id: (string),
+ *   name: (string)
+ * }}
+ */
+till.model.City;
 });  // goog.scope
