@@ -3,9 +3,11 @@
 goog.provide('till');
 
 goog.require('goog.array');
+goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
 goog.require('goog.soy');
+goog.require('goog.string.format');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.MenuItem');
@@ -40,11 +42,6 @@ var App = function(opt_domHelper) {
   this.addChild(this.citySelect_);
 
   /**
-   * @private {!Element}
-   */
-  this.queryInput_ = this.dom_.createDom(goog.dom.TagName.INPUT);
-
-  /**
    * @private {!goog.ui.Button}
    */
   this.queryButton_ = new goog.ui.Button('Query', undefined, this.dom_);
@@ -68,7 +65,6 @@ App.prototype.enterDocument = function() {
   App.superClass_.enterDocument.call(this);
 
   this.renderCitySelect_();
-  this.renderQueryInput_();
   this.renderQueryButton_();
   this.bindEvents_();
 
@@ -83,25 +79,8 @@ App.prototype.enterDocument = function() {
  */
 App.prototype.renderCitySelect_ = function() {
   var element = this.dom_.getElementByClass(
-      goog.getCssName('till-form'), this.getElement());
+      goog.getCssName('till-form-city'), this.getElement());
   this.citySelect_.render(element);
-};
-
-
-/**
- * @private
- */
-App.prototype.renderQueryInput_ = function() {
-  var attributes = {
-    'placeholder': 'Enter a search query',
-    'type': 'text'
-  };
-
-  this.dom_.setProperties(this.queryInput_, attributes);
-
-  var element = this.dom_.getElementByClass(
-      goog.getCssName('till-form'), this.getElement());
-  this.dom_.appendChild(element, this.queryInput_);
 };
 
 
@@ -110,8 +89,18 @@ App.prototype.renderQueryInput_ = function() {
  */
 App.prototype.renderQueryButton_ = function() {
   var element = this.dom_.getElementByClass(
-      goog.getCssName('till-form'), this.getElement());
+      goog.getCssName('till-form-submit'), this.getElement());
   this.queryButton_.render(element);
+};
+
+
+/**
+ * @return {Element}
+ * @private
+ */
+App.prototype.getQueryInput_ = function() {
+  return this.dom_.getDocument().querySelector(
+      goog.string.format('.%s input', goog.getCssName('till-form-query')));
 };
 
 
@@ -120,7 +109,7 @@ App.prototype.renderQueryButton_ = function() {
  */
 App.prototype.bindEvents_ = function() {
   this.getHandler().listen(
-      this.queryInput_, goog.events.EventType.KEYPRESS,
+      this.getQueryInput_(), goog.events.EventType.KEYPRESS,
       this.handleQueryInputKeyPress_);
 
   this.getHandler().listen(
@@ -153,8 +142,11 @@ App.prototype.handleQueryButtonAction_ = function(e) {
  * @private
  */
 App.prototype.submitQuery_ = function() {
+  this.disableFormInputs_();
+  this.showActivityIndicator_();
+
   var city = this.citySelect_.getSelectedItem();
-  var query = this.queryInput_.value;
+  var query = this.getQueryInput_().value;
   if (!city || !query) {
     return;
   }
@@ -190,6 +182,9 @@ App.prototype.handleGetAutomobiles_ = function(automobiles) {
   this.renderPriceByYearChart_(container, automobiles);
   this.renderPriceByMileageChart_(container, automobiles);
   this.renderMileageByYearChart_(container, automobiles);
+
+  this.hideActivityIndicator_();
+  this.enableFormInputs_();
 };
 
 
@@ -272,6 +267,44 @@ App.prototype.renderChart_ = function(
 
   new Dygraph(element, [header.join(',')].concat(rows).join('\n'), attrs);
   goog.dom.classlist.add(element, goog.getCssName('till-results-chart'));
+};
+
+
+/**
+ * @private
+ */
+App.prototype.disableFormInputs_ = function() {
+  this.queryButton_.setEnabled(false);
+  this.dom_.setProperties(this.getQueryInput_(), { 'disabled': true });
+};
+
+
+/**
+ * @private
+ */
+App.prototype.enableFormInputs_ = function() {
+  this.queryButton_.setEnabled(true);
+  this.dom_.setProperties(this.getQueryInput_(), { 'disabled': false });
+};
+
+
+/**
+ * @private
+ */
+App.prototype.showActivityIndicator_ = function() {
+  var element = this.dom_.getElementByClass(
+      goog.getCssName('till-form-notifications'), this.getElement());
+  goog.dom.classlist.add(element, goog.getCssName('till-spinner'));
+};
+
+
+/**
+ * @private
+ */
+App.prototype.hideActivityIndicator_ = function() {
+  var element = this.dom_.getElementByClass(
+      goog.getCssName('till-form-notifications'), this.getElement());
+  goog.dom.classlist.remove(element, goog.getCssName('till-spinner'));
 };
 
 new App().render();

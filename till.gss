@@ -1,6 +1,16 @@
-.till-form > * {
+.till-form > div {
+  display: inline-block;
   margin: 2px;
   vertical-align: middle;
+}
+
+.till-form-query input {
+  width: 16em;
+}
+
+.till-form-notifications {
+  height: 2em;
+  width: 2em;
 }
 
 .till-results {
@@ -12,4 +22,19 @@
   display: inline-block;
   margin: 2px;
   padding: 8px;
+}
+
+.till-spinner {
+  -webkit-animation: rotation .6s infinite linear;
+  border-bottom: 1px solid #000;
+  border-radius: 2em;
+  height: 2em;
+  margin-left: 1ex !important;
+  width: 2em;
+}
+
+@-webkit-keyframes rotation {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
 }
