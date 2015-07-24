@@ -26,7 +26,7 @@ function run() {
   [ ! -d ${FLAGS_envname} ] && virtualenv ${FLAGS_envname}
   source ${FLAGS_envname}/bin/activate
   pip install -r requirements.txt
-  gunicorn server:APP --bind 0.0.0.0:${FLAGS_port} --log-level DEBUG
+  gunicorn --bind 0.0.0.0:${FLAGS_port} --access-logfile - server:APP
   deactivate
 }
 
