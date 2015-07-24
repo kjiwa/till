@@ -1,3 +1,4 @@
-bottle==0.12.8
-lxml==3.4.4
-python-gflags==2.0
+bottle
+gunicorn
+lxml
+python-gflags

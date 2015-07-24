@@ -1,1 +1,1 @@
-web: python __main__.py --port=$PORT
+web: gunicorn server:APP --log-file -
