@@ -38,7 +38,7 @@ function build() {
 function run() {
   [ ! -d ${FLAGS_envname} ] && virtualenv ${FLAGS_envname}
   source ${FLAGS_envname}/bin/activate
-  pip install bottle lxml python-gflags
+  pip install -r requirements.txt
   ./${FLAGS_out} $@
   deactivate
 }
