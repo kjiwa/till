@@ -18,7 +18,7 @@ set -e
 
 # Cleans the directory of build artifacts.
 function clean() {
-  rm -rf ${FLAGS_envname}
+  rm -rf ${FLAGS_envname} *.pyc
 }
 
 # Creates a virtualenv environment and runs the output binary in it.

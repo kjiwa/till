@@ -1,4 +1,3 @@
 bottle
 gunicorn
 lxml
-python-gflags
