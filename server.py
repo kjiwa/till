@@ -7,27 +7,27 @@ import json
 APP = bottle.default_app()
 
 
-@bottle.route('/')
+@APP.route('/')
 def html():
   return bottle.static_file('till.html', '.')
 
 
-@bottle.route('/till.css')
+@APP.route('/till.css')
 def css():
   return bottle.static_file('till_combined.css', 'compiled')
 
 
-@bottle.route('/till.js')
+@APP.route('/till.js')
 def js():
   return bottle.static_file('app_combined.js', 'compiled')
 
 
-@bottle.route('/ping')
+@APP.route('/ping')
 def ping():
   return bottle.HTTPResponse(status=204)
 
 
-@bottle.route('/automobiles/<city>/<query>')
+@APP.route('/automobiles/<city>/<query>')
 def automobiles(city, query):
   """Queries Craigslist for automobiles.
 
@@ -46,7 +46,7 @@ def automobiles(city, query):
   return json.dumps({'automobiles': content})
 
 
-@bottle.route('/cities')
+@APP.route('/cities')
 def cities():
   """Gets a list of cities that can be queried.
 
