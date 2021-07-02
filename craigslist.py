@@ -4,11 +4,11 @@ import collections
 import logging
 import re
 import threading
-import urllib
+import urllib.parse
+import urllib.request
 import lxml.etree
 
 Automobile = collections.namedtuple('Automobile', ['mileage', 'price', 'year'])
-
 
 City = collections.namedtuple('City', ['city_id', 'name'])
 
@@ -30,7 +30,8 @@ def automobiles(city, query):
 
     threads = []
     for j in autos:
-      thread = threading.Thread(target=_get_auto_thread, args=(city, j, result))
+      thread = threading.Thread(target=_get_auto_thread,
+                                args=(city, j, result))
       thread.start()
       threads.append(thread)
 
@@ -73,20 +74,22 @@ def _get_auto(city, link):
     An Automobile object or None if there was a parsing error.
   """
   url = link
-  if not link.startswith('http://'):
-    url = 'http://%s.craigslist.org%s' % (
-        urllib.quote(city), urllib.quote(link))
+  if not (link.startswith('http://') or link.startswith('https://')):
+    url = 'https://%s.craigslist.org%s' % (urllib.parse.quote(city),
+                                           urllib.parse.quote(link))
 
   tree = lxml.etree.HTML(_read_url(url))
   if tree is None:
     return None
 
   elements = tree.xpath('//p[@class="attrgroup"]/span')
-  attrs = [lxml.etree.tostring(
-      i, encoding='unicode', method='text') for i in elements]
+  attrs = [
+      lxml.etree.tostring(i, encoding='unicode', method='text')
+      for i in elements
+  ]
 
-  return Automobile(
-      _get_auto_mileage(attrs), _get_auto_price(tree), _get_auto_year(attrs))
+  return Automobile(_get_auto_mileage(attrs), _get_auto_price(tree),
+                    _get_auto_year(attrs))
 
 
 def _get_auto_mileage(attrs):
@@ -116,12 +119,12 @@ def _get_auto_price(tree):
   Returns:
     A price value or None.
   """
-  pattern = re.compile(r'^.*\$(\d+).*$')
-  elements = tree.xpath('//h2[@class="postingtitle"]')
+  pattern = re.compile(r'^\s*\$(\S+)\s*$')
+  elements = tree.xpath('//span[@class="price"]')
   for i in elements:
     title = lxml.etree.tostring(i, encoding='unicode', method='text')
     match = pattern.match(title.strip())
-    return int(match.group(1)) if match else None
+    return float(match.group(1).replace(',', '')) if match else None
 
 
 def _get_auto_year(attrs):
@@ -133,7 +136,7 @@ def _get_auto_year(attrs):
   Returns:
     A year value or None.
   """
-  pattern = re.compile(r'^\s*(\d+).*$')
+  pattern = re.compile(r'^\s*(\d+)')
   for i in attrs:
     match = pattern.match(i)
     if match:
@@ -151,17 +154,19 @@ def _list_autos(city, query, page):
   Returns:
     A list of matching Automobile objects.
   """
-  qstr = urllib.urlencode({
+  qstr = urllib.parse.urlencode({
       'hasPic': 1,
-      'query': query,
+      'auto_make_model': query,
       's': page * 100,
-      'srchType': 'T'
+      'srchType': 'T',
+      'hints': 'makemodel'
   })
 
-  url = 'http://%s.craigslist.org/search/cta?%s' % (urllib.quote(city), qstr)
+  url = 'https://%s.craigslist.org/d/cars-trucks/search/cta?%s' % (
+      urllib.parse.quote(city), qstr)
   tree = lxml.etree.HTML(_read_url(url))
   if tree is not None:
-    elements = tree.xpath('//p[@data-pid]/a')
+    elements = tree.xpath('//li[@data-pid]/a')
     return [i.attrib.get('href') for i in elements]
 
   return []
@@ -176,7 +181,7 @@ def _read_url(url):
   Returns:
     A string representing the contents of the URL.
   """
-  return urllib.urlopen(url).read()
+  return urllib.request.urlopen(url).read()
 
 
 def _get_auto_thread(city, link, result):
